@@ -7,6 +7,8 @@ window.Protect=(function(){
     if(P.blockRightClick)document.addEventListener('contextmenu',e=>e.preventDefault());
     if(P.blockCopySelect)['copy','cut','dragstart','selectstart'].forEach(v=>document.addEventListener(v,e=>e.preventDefault()));
     if(P.blockShortcuts){
+      // Win+Shift+S: Windows key दबते ही कंटेंट छुपा दो — स्निप टूल उसी पल की फ़्रीज़ तस्वीर लेता है
+      document.addEventListener('keydown',e=>{if(e.key==='Meta'||e.key==='OS'||e.metaKey)hide();},true);
       document.addEventListener('keydown',e=>{
         const k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;
         if(k==='printscreen'||k==='f12'||(c&&['p','s','u','c','a'].includes(k))||(c&&e.shiftKey&&['i','j','c','s'].includes(k))||(e.metaKey&&e.shiftKey&&['3','4','5'].includes(k))){e.preventDefault();hide();}
