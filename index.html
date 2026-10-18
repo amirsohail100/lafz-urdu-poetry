@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Urdu Poetry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Mukta:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#14162f; --ink:#f3effa; --muted:#b9b4d6; --paper:#fbf8ff; --paper-ink:#1d1b33;
+  --font-ur:"Noto Nastaliq Urdu","Jameel Noori Nastaleeq","Noto Naskh Arabic",serif;
+  --font-ui:"Mukta",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ur)}
+body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px 60px}
+header{padding:64px 0 36px;text-align:center}
+header h1{font-size:clamp(2.4rem,8vw,4.2rem);margin:0;line-height:2;font-weight:700}
+header p{margin:0;color:var(--muted);font-size:1.2rem;line-height:2.2}
+
+/* बैनर */
+.banner{display:block;width:100%;border:0;margin:0 0 18px;padding:28px 30px;border-radius:22px;
+  color:#fff;text-align:right;cursor:pointer;font-family:inherit;position:relative;overflow:hidden;
+  background:linear-gradient(120deg,var(--c1),var(--c2));min-height:170px;
+  transition:transform .25s ease}
+.banner:hover{transform:translateY(-3px)}
+.banner:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.banner .type{display:inline-block;font-size:.95rem;padding:2px 16px;border:1px solid rgba(255,255,255,.6);border-radius:99px;line-height:2.2}
+.banner h2{margin:6px 0 2px;font-size:clamp(1.8rem,5vw,2.6rem);line-height:2.1;font-weight:700}
+.banner .about{margin:0;max-width:34em;font-size:1.05rem;line-height:2.2;opacity:.92}
+.banner .go{position:absolute;left:26px;bottom:22px;font-family:var(--font-ui);font-size:.95rem;
+  background:rgba(255,255,255,.18);padding:6px 16px;border-radius:99px}
+
+/* पढ़ने वाली स्क्रीन */
+#reader{position:fixed;inset:0;z-index:50;display:none;background:var(--paper);color:var(--paper-ink);overflow:auto;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+#reader.open{display:block;animation:rise .3s ease}
+@keyframes rise{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+#reader .top{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;
+  padding:14px 20px;background:var(--paper);border-bottom:4px solid var(--c1);z-index:2}
+#reader .top button{font-family:var(--font-ui);font-size:1rem;border:0;border-radius:99px;padding:8px 20px;
+  background:var(--c1);color:#fff;cursor:pointer}
+#reader .top span{font-size:1.1rem}
+.poem{max-width:640px;margin:0 auto;padding:40px 24px 90px;text-align:center}
+.poem h2{font-size:clamp(2rem,6vw,3rem);margin:0 0 8px;line-height:2.2}
+.poem .line{font-size:clamp(1.25rem,3.6vw,1.6rem);line-height:2.7;margin:0}
+.poem .gap{height:22px}
+#wm{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:.09}
+
+/* सुरक्षा */
+.protect, .protect *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.protect img{-webkit-user-drag:none}
+#shield{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center;
+  background:#0b0c1d;color:#fff;text-align:center;padding:30px;font-family:var(--font-ui);cursor:pointer}
+#shield.on{display:flex}
+#shield p{max-width:22em;line-height:1.7;font-size:1.1rem}
+@media print{.protect body, .protect .wrap, .protect #reader{display:none!important}}
+
+footer{text-align:center;color:var(--muted);padding:20px;line-height:2}
+@media (prefers-reduced-motion:reduce){#reader.open{animation:none}.banner{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1 id="poet"></h1><p id="tag"></p></header>
+  <main id="list"></main>
+  <footer id="foot"></footer>
+</div>
+
+<section id="reader" aria-label="پوئٹری" role="dialog" aria-modal="true">
+  <div class="top"><span id="rtype"></span><button id="close" type="button">بند کریں</button></div>
+  <div style="position:relative"><div id="wm"></div><article class="poem" id="poem"></article></div>
+</section>
+
+<div id="shield" role="alert"><p>सुरक्षा के लिए कंटेंट छुपा दिया गया है।<br>वापस देखने के लिए यहाँ क्लिक करें।</p></div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const P = SITE.protection || {};
+  document.title = SITE.poetName + " — " + SITE.tagline;
+  $("poet").textContent = SITE.poetName;
+  $("tag").textContent = SITE.tagline;
+  $("foot").textContent = SITE.footer;
+
+  /* बैनर बनाना (textContent से, ताकि data.js का टेक्स्ट सुरक्षित रहे) */
+  const list = $("list");
+  POEMS.forEach(p => {
+    const b = document.createElement("button");
+    b.className = "banner"; b.type = "button";
+    b.style.setProperty("--c1", p.colors[0]); b.style.setProperty("--c2", p.colors[1]);
+    const t = document.createElement("span"); t.className = "type"; t.textContent = p.type;
+    const h = document.createElement("h2"); h.textContent = p.title;
+    const a = document.createElement("p"); a.className = "about"; a.textContent = p.about;
+    const g = document.createElement("span"); g.className = "go"; g.textContent = "पढ़ें";
+    b.append(t, h, a, g);
+    b.addEventListener("click", () => openPoem(p));
+    list.appendChild(b);
+  });
+
+  /* पोएट्री खोलना / बंद करना */
+  const reader = $("reader");
+  let lastFocus = null;
+  function openPoem(p){
+    lastFocus = document.activeElement;
+    reader.style.setProperty("--c1", p.colors[0]);
+    $("rtype").textContent = p.type;
+    const art = $("poem"); art.replaceChildren();
+    const h = document.createElement("h2"); h.textContent = p.title; art.appendChild(h);
+    p.lines.forEach(l => {
+      const d = document.createElement("p");
+      if(l === ""){ d.className = "gap"; } else { d.className = "line"; d.textContent = l; }
+      art.appendChild(d);
+    });
+    reader.classList.add("open"); reader.scrollTop = 0; $("close").focus();
+  }
+  function closePoem(){ reader.classList.remove("open"); if(lastFocus) lastFocus.focus(); }
+  $("close").addEventListener("click", closePoem);
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && reader.classList.contains("open")) closePoem(); });
+
+  })();
+</script>
+</body>
+</html>
