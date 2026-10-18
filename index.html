@@ -1,38 +1,45 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl" data-theme="light">
+<html lang="ur" dir="rtl" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Urdu Poetry</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="bar" id="bar"></div>
 <nav class="nav">
   <b id="brand"></b>
-  <div><button class="pill" id="shuffle" type="button">🎲 Surprise me</button>
-  <button class="pill" id="theme" type="button" aria-label="Dark / light">◐</button></div>
+  <div class="acts">
+    <button class="btn" id="shuffle" type="button">Shuffle</button>
+    <button class="btn ico" id="theme" type="button" aria-label="Dark / light">◐</button>
+  </div>
 </nav>
 <header class="hero">
-  <p class="sticker">NEW ✦ شاعری</p>
-  <h1 id="poet"></h1><p id="tag"></p>
+  <p class="kicker">Urdu poetry</p>
+  <h1 id="poet"></h1>
+  <p class="tag" id="tag"></p>
 </header>
-<div class="marquee" aria-hidden="true"><div id="mq"></div></div>
-<div class="chips" id="chips"></div>
+<div class="seg" id="chips" role="group" aria-label="Filter"></div>
 <main class="grid" id="grid"></main>
 <footer id="foot"></footer>
 
 <section id="reader" role="dialog" aria-modal="true" aria-label="Poem">
-  <div class="rbar">
-    <button class="pill" id="close" type="button">✕</button>
-    <div><button class="pill" id="sm" type="button">A−</button><button class="pill" id="lg" type="button">A+</button>
-    <button class="pill" id="like" type="button" aria-label="Like">♡</button>
-    <button class="pill" id="prev" type="button">←</button><button class="pill" id="next" type="button">→</button></div>
+  <div class="rtop">
+    <button class="btn ico" id="close" type="button" aria-label="Close">✕</button>
+    <span id="count" class="count"></span>
+    <div class="acts">
+      <button class="btn ico" id="sm" type="button" aria-label="Smaller text">A−</button>
+      <button class="btn ico" id="lg" type="button" aria-label="Larger text">A+</button>
+      <button class="btn ico" id="like" type="button" aria-label="Like">♡</button>
+      <button class="btn ico" id="prev" type="button" aria-label="Previous poem">‹</button>
+      <button class="btn ico" id="next" type="button" aria-label="Next poem">›</button>
+    </div>
   </div>
   <div class="rprog" id="rprog"></div>
-  <div class="paper"><div id="wm"></div><article id="poem"></article></div>
+  <div id="wm"></div>
+  <div id="poem"></div>
 </section>
 <div id="shield"><p>Content hidden for protection.<br>Tap to continue reading.</p></div>
 
