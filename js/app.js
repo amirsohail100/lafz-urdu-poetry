@@ -47,7 +47,7 @@ function open(p,keepHash){
   R.classList.add('open');R.scrollTop=0;$('#close').focus();
   if(!keepHash)history.replaceState(null,'','#'+p.id);
 }
-function close(){R.classList.remove('open');history.replaceState(null,'',location.pathname);cards();last&&last.focus()}
+function close(){window.speechSynthesis&&speechSynthesis.cancel();R.classList.remove('open');history.replaceState(null,'',location.pathname);cards();last&&last.focus()}
 const go=d=>open(POEMS[(cur+d+POEMS.length)%POEMS.length]);
 $('#close').onclick=close;$('#prev').onclick=()=>go(-1);$('#next').onclick=()=>go(1);
 $('#sm').onclick=()=>setFs(fs-.15);$('#lg').onclick=()=>setFs(fs+.15);
@@ -56,6 +56,8 @@ $('#shuffle').onclick=()=>open(POEMS[Math.floor(Math.random()*POEMS.length)]);
 R.addEventListener('scroll',()=>{$('#rprog').style.width=(R.scrollTop/Math.max(1,R.scrollHeight-R.clientHeight)*100)+'%'});
 document.addEventListener('keydown',e=>{if(!R.classList.contains('open'))return;
   if(e.key==='Escape')close();if(e.key==='ArrowLeft')go(1);if(e.key==='ArrowRight')go(-1)});
+const sp=$('#speak');if(!('speechSynthesis' in window))sp.hidden=true;
+sp.onclick=()=>{const s=speechSynthesis;if(s.speaking){s.cancel();return}const u=new SpeechSynthesisUtterance(POEMS[cur].lines.filter(Boolean).join('۔ '));u.lang='ur-PK';u.rate=.8;s.speak(u)};
 const fromHash=()=>{const p=POEMS.find(x=>'#'+x.id===location.hash);if(p)open(p,true)};
 fromHash();addEventListener('hashchange',fromHash);
 })();
