@@ -26,4 +26,29 @@ function cards(){const g=$('#grid');g.replaceChildren();
     c.append(m,el('h2','',p.title),el('p','',p.about),el('span','cta','Read ↗'));
     c.onclick=()=>open(p);g.appendChild(c)})}
 chips();cards();
+
+const R=$('#reader');let cur=0,io,last,fs=parseFloat(store('fs'))||1.5;
+const setFs=v=>{fs=Math.min(2.6,Math.max(1.1,v));root.style.setProperty('--fs',fs+'rem');store('fs',fs)};setFs(fs);
+function open(p,keepHash){
+  last=document.activeElement;cur=POEMS.indexOf(p);R.style.setProperty('--acc',p.colors[1]);
+  const a=$('#poem');a.replaceChildren(el('h2','',p.title));
+  p.lines.forEach(l=>a.appendChild(l===''?el('div','gap'):el('p','ln',l)));
+  io&&io.disconnect();io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{root:R,threshold:.6});
+  a.querySelectorAll('.ln').forEach(n=>io.observe(n));
+  $('#like').textContent=store('like:'+p.id)?'♥':'♡';
+  if(P.watermark)Protect.mark($('#wm'));
+  R.classList.add('open');R.scrollTop=0;$('#close').focus();
+  if(!keepHash)history.replaceState(null,'','#'+p.id);
+}
+function close(){R.classList.remove('open');history.replaceState(null,'',location.pathname);cards();last&&last.focus()}
+const go=d=>open(POEMS[(cur+d+POEMS.length)%POEMS.length]);
+$('#close').onclick=close;$('#prev').onclick=()=>go(-1);$('#next').onclick=()=>go(1);
+$('#sm').onclick=()=>setFs(fs-.15);$('#lg').onclick=()=>setFs(fs+.15);
+$('#like').onclick=()=>{const k='like:'+POEMS[cur].id;store(k,store(k)?'':'1');$('#like').textContent=store(k)?'♥':'♡'};
+$('#shuffle').onclick=()=>open(POEMS[Math.floor(Math.random()*POEMS.length)]);
+R.addEventListener('scroll',()=>{$('#rprog').style.width=(R.scrollTop/Math.max(1,R.scrollHeight-R.clientHeight)*100)+'%'});
+document.addEventListener('keydown',e=>{if(!R.classList.contains('open'))return;
+  if(e.key==='Escape')close();if(e.key==='ArrowLeft')go(1);if(e.key==='ArrowRight')go(-1)});
+const fromHash=()=>{const p=POEMS.find(x=>'#'+x.id===location.hash);if(p)open(p,true)};
+fromHash();addEventListener('hashchange',fromHash);
 })();
