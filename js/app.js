@@ -28,14 +28,19 @@ function cards(){const g=$('#grid');g.replaceChildren();
     c.onclick=()=>open(p);g.appendChild(c)})}
 chips();cards();
 
-const R=$('#reader');let cur=0,io,last,fs=parseFloat(store('fs'))||1.5;
-const setFs=v=>{fs=Math.min(2.6,Math.max(1.1,v));root.style.setProperty('--fs',fs+'rem');store('fs',fs)};setFs(fs);
+/* reader */
+const R=$('#reader');let cur=0,io,last,fs=parseFloat(store('fs'))||1.7;
+const setFs=v=>{fs=Math.min(2.8,Math.max(1.2,v));root.style.setProperty('--fs',fs+'rem');store('fs',fs)};setFs(fs);
 function open(p,keepHash){
-  last=document.activeElement;cur=POEMS.indexOf(p);R.style.setProperty('--acc',p.colors[1]);
-  const a=$('#poem');a.replaceChildren(el('h2','',p.title));
-  p.lines.forEach(l=>a.appendChild(l===''?el('div','gap'):el('p','ln',l)));
-  io&&io.disconnect();io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{root:R,threshold:.6});
-  a.querySelectorAll('.ln').forEach(n=>io.observe(n));
+  last=document.activeElement;cur=POEMS.indexOf(p);R.style.setProperty('--acc',p.colors[0]);
+  const gs=groups(p),a=$('#poem');a.replaceChildren();
+  const cover=el('section','pg');cover.append(el('h2','',p.title),el('div','sub',p.type+' · '+gs.length+' parts'),el('div','hint','Scroll ↓'));a.appendChild(cover);
+  gs.forEach(g=>{const s=el('section','pg');g.forEach(l=>s.appendChild(el('p','l',l)));a.appendChild(s)});
+  const pages=[...a.children];
+  io&&io.disconnect();
+  io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');$('#count').textContent=(pages.indexOf(e.target))+' / '+gs.length}}),{root:R,threshold:.55});
+  pages.forEach(x=>io.observe(x));
+  $('#count').textContent='0 / '+gs.length;
   $('#like').textContent=store('like:'+p.id)?'♥':'♡';
   if(P.watermark)Protect.mark($('#wm'));
   R.classList.add('open');R.scrollTop=0;$('#close').focus();
