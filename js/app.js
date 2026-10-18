@@ -36,7 +36,7 @@ function open(p,keepHash){
   last=document.activeElement;cur=POEMS.indexOf(p);R.style.setProperty('--acc',p.colors[0]);
   const gs=groups(p),a=$('#poem');a.replaceChildren();
   const cover=el('section','pg');cover.append(el('h2','',p.title),el('div','sub',p.type+' · '+gs.length+' parts'),el('div','hint','Scroll ↓'));a.appendChild(cover);
-  gs.forEach(g=>{const s=el('section','pg');g.forEach(l=>s.appendChild(el('p','l',l)));a.appendChild(s)});
+  gs.forEach(g=>{const s=el('section','pg');let wi=0;g.forEach(l=>{const q=el('p','l');l.split(' ').forEach(w=>{const x=el('span','w',w);x.style.setProperty('--i',wi++);q.append(x,' ')});s.appendChild(q)});a.appendChild(s)});
   const pages=[...a.children];
   io&&io.disconnect();
   io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');$('#count').textContent=(pages.indexOf(e.target))+' / '+gs.length}}),{root:R,threshold:.55});
