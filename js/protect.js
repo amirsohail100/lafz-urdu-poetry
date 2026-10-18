@@ -9,6 +9,7 @@ window.Protect=(function(){
     if(P.blockShortcuts){
       // Win+Shift+S: Windows key दबते ही कंटेंट छुपा दो — स्निप टूल उसी पल की फ़्रीज़ तस्वीर लेता है
       document.addEventListener('keydown',e=>{if(e.key==='Meta'||e.key==='OS'||e.metaKey)hide();},true);
+      document.addEventListener('keyup',e=>{if(e.key==='Meta'||e.key==='OS')setTimeout(show,1500);},true);
       document.addEventListener('keydown',e=>{
         const k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;
         if(k==='printscreen'||k==='f12'||(c&&['p','s','u','c','a'].includes(k))||(c&&e.shiftKey&&['i','j','c','s'].includes(k))||(e.metaKey&&e.shiftKey&&['3','4','5'].includes(k))){e.preventDefault();hide();}
@@ -21,7 +22,7 @@ window.Protect=(function(){
     let id='';try{id=sessionStorage.getItem('vid')||''}catch(_){}
     if(!id){id=Math.random().toString(36).slice(2,8).toUpperCase();try{sessionStorage.setItem('vid',id)}catch(_){}}
     const t=id+' • '+new Date().toLocaleString('en-IN');
-    const svg="<svg xmlns='http://www.w3.org/2000/svg' width='260' height='140'><text x='20' y='80' font-size='15' font-family='sans-serif' fill='#888' transform='rotate(-25 130 70)'>"+t+"</text></svg>";
+    const svg="<svg xmlns='http://www.w3.org/2000/svg' width='260' height='140'><text x='20' y='80' font-size='15' font-family='sans-serif' fill='#999' transform='rotate(-25 130 70)'>"+t+"</text></svg>";
     el.style.backgroundImage='url("data:image/svg+xml;utf8,'+encodeURIComponent(svg)+'")';
   }
   return{init,mark};
