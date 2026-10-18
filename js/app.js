@@ -7,7 +7,8 @@ Protect.init(P);
 root.dataset.theme=store('theme')||'dark';
 $('#theme').onclick=()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';store('theme',root.dataset.theme)};
 document.title=SITE.poetName+' — '+SITE.tagline;
-$('#brand').textContent=SITE.poetName;$('#poet').textContent=SITE.poetName;
+$('#brand').textContent=SITE.poetName;SITE.poetName.split(' ').forEach((w,i)=>{const s=el('span','kw',w);s.style.setProperty('--i',i);$('#poet').append(s,' ')});
+const A=$('.aurora').children;[0,1,2].forEach(i=>{A[i].style.background=POEMS[i%POEMS.length].colors[i%2]});
 $('#tag').textContent=SITE.tagline;$('#foot').textContent=SITE.footer;
 
 /* data.js की lines को शेर/बंद में बाँटना (खाली लाइन = नया बंद) */
