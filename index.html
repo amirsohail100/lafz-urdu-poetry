@@ -121,6 +121,16 @@ footer{text-align:center;color:var(--muted);padding:20px;line-height:2}
   $("close").addEventListener("click", closePoem);
   document.addEventListener("keydown", e => { if(e.key === "Escape" && reader.classList.contains("open")) closePoem(); });
 
+  /* वॉटरमार्क: विज़िटर ID + समय — स्क्रीनशॉट लीक होने पर पहचान में मदद */
+  if(P.watermark){
+    let id = "";
+    try{ id = sessionStorage.getItem("vid") || ""; }catch(e){}
+    if(!id){ id = Math.random().toString(36).slice(2,8).toUpperCase(); try{ sessionStorage.setItem("vid", id); }catch(e){} }
+    const txt = id + " • " + new Date().toLocaleString("en-IN");
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='140'><text x='20' y='80' font-size='15' font-family='sans-serif' fill='#000' transform='rotate(-25 130 70)'>${txt}</text></svg>`;
+    $("wm").style.backgroundImage = "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg) + "\")";
+  }
+
   })();
 </script>
 </body>
