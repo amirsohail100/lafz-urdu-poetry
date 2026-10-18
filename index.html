@@ -131,7 +131,44 @@ footer{text-align:center;color:var(--muted);padding:20px;line-height:2}
     $("wm").style.backgroundImage = "url(\"data:image/svg+xml;utf8," + encodeURIComponent(svg) + "\")";
   }
 
-  })();
+  /* ---------- सुरक्षा परत ---------- */
+  const shield = $("shield");
+  const hide = () => shield.classList.add("on");
+  const show = () => shield.classList.remove("on");
+  shield.addEventListener("click", show);
+
+  if(P.blockCopySelect) document.documentElement.classList.add("protect");
+  if(P.blockPrint) document.documentElement.classList.add("protect");
+
+  if(P.blockRightClick) document.addEventListener("contextmenu", e => e.preventDefault());
+  if(P.blockCopySelect){
+    ["copy","cut","dragstart","selectstart"].forEach(ev => document.addEventListener(ev, e => e.preventDefault()));
+  }
+  if(P.blockShortcuts){
+    document.addEventListener("keydown", e => {
+      const k = (e.key || "").toLowerCase();
+      const ctrl = e.ctrlKey || e.metaKey;
+      const bad =
+        k === "printscreen" || k === "f12" ||
+        (ctrl && ["p","s","u","c","a"].includes(k)) ||
+        (ctrl && e.shiftKey && ["i","j","c","s"].includes(k)) ||
+        (e.metaKey && e.shiftKey && ["3","4","5"].includes(k)) ||   // Mac स्क्रीनशॉट
+        (e.metaKey && e.shiftKey && k === "s") ||                    // Windows Win+Shift+S
+        (e.altKey && k === "printscreen");
+      if(bad){ e.preventDefault(); hide(); }
+    }, true);
+    document.addEventListener("keyup", e => {
+      if((e.key || "").toLowerCase() === "printscreen"){
+        try{ navigator.clipboard.writeText(" "); }catch(_){}   // क्लिपबोर्ड खाली करने की कोशिश
+        hide();
+      }
+    });
+  }
+  if(P.hideOnBlur){
+    window.addEventListener("blur", hide);
+    document.addEventListener("visibilitychange", () => { if(document.hidden) hide(); });
+  }
+})();
 </script>
 </body>
 </html>
