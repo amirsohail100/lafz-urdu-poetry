@@ -26,7 +26,7 @@ function cards(){const g=$('#grid');g.replaceChildren();
     const m=el('div','meta');m.append(el('span','tp',p.type),el('span','',store('like:'+p.id)?'♥':p.mood));
     const n=groups(p).length,f=el('div','foot');f.append(el('span','',n+' parts · '+Math.max(1,Math.round(n/2))+' min'),el('span','go','Read'));
     c.append(m,el('h2','',p.title),el('p','',p.about),f);
-    c.onclick=()=>open(p);g.appendChild(c)})}
+    c.onclick=()=>open(p);c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')});g.appendChild(c)})}
 chips();cards();
 
 /* reader */
